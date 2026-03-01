@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantym Digital Store</title>
+
+<style>
+:root{
+  --primary:#0F172A;
+  --card:#1E293B;
+  --accent:#38BDF8;
+  --text:#F1F5F9;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+  scroll-behavior:smooth;
+}
+
+body{
+  background:linear-gradient(135deg,#0F172A,#0b1220,#111827);
+  color:var(--text);
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 8%;
+  background:rgba(15,23,42,0.7);
+  backdrop-filter:blur(12px);
+  position:sticky;
+  top:0;
+  z-index:1000;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo img{
+  width:40px;
+}
+
+nav a{
+  margin-left:20px;
+  text-decoration:none;
+  color:var(--text);
+  cursor:pointer;
+  font-weight:600;
+}
+
+nav a:hover{
+  color:var(--accent);
+}
+
+.hero{
+  text-align:center;
+  padding:120px 20px;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr); /* 4 kolom */
+  gap:25px;
+  padding:40px 8%;
+}
+@media(max-width:1000px){
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:600px){
+  .products{
+    grid-template-columns:1fr;
+  }
+}
+
+.product{
+  background:var(--card);
+  border-radius:20px; /* lebih halus */
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.4);
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  aspect-ratio:1 / 1; /* Bikin 4x4 kotak */
+}
+
+.product:hover{
+  transform:translateY(-10px) scale(1.03);
+  box-shadow:0 20px 40px rgba(56,189,248,0.15);
+}
+
+.product img{
+  width:100%;
+  height:60%;
+  object-fit:cover;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  background:var(--accent);
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:8px;
+  margin-top:10px;
+}
+
+.cart-btn{
+  background:var(--accent);
+  padding:8px 15px;
+  border-radius:20px;
+}
+
+./* ===== POPUP BASE ===== */
+.popup{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(5px);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+}
+
+/* Modal Tengah (Checkout & Payment) */
+.popup-content{
+  background:var(--card);
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:500px;
+  animation:modalFade 0.3s ease;
+}
+
+/* Animasi Modal */
+@keyframes modalFade{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+} 
+/* ===== CART SLIDE PANEL ===== */
+.cart-style{
+  position:fixed;
+  top:0;
+  right:-420px;
+  height:100%;
+  width:400px;
+  border-radius:0;
+  background:var(--card);
+  padding:30px;
+  transition:0.4s ease;
+  display:flex;
+  flex-direction:column;
+}
+
+.cart-open{
+  right:0;
+}
+.cart-style{
+  position:fixed;
+  right:-500px;
+  top:0;
+  height:100%;
+  width:400px;
+  border-radius:0;
+  transition:0.4s ease;
+}
+.checkout-style{
+  position:relative;   /* penting */
+  width:90%;
+  max-width:500px;
+  margin:auto;
+}
+
+.popup input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:8px;
+  border:none;
+}
+
+.close{
+  float:right;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.admin-panel{
+  padding:40px 8%;
+  border-top:1px solid #333;
+}
+
+.admin-panel input{
+  margin:5px 0;
+}
+footer{
+  text-align:center;
+  padding:20px;
+  background:#0b1220;
+}
+/* === ANIMASI CLICK BUTTON === */
+button:active{
+  transform:scale(0.95);
+}
+
+@keyframes bounceCart{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.3);}
+  100%{transform:scale(1);}
+}
+
+.cart-animate{
+  animation:bounceCart 0.4s ease;
+}
+
+/* POPUP ANIMATION */
+.popup{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+  animation:fadeIn 0.3s ease;
+}
+
+.popup-content{
+  background:var(--card);
+  padding:30px;
+  border-radius:15px;
+  width:90%;
+  max-width:420px;
+  position:relative;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes slideUp{
+  from{transform:translateY(30px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+/* ===== ABOUT PREMIUM ===== */
+.about-section{
+  padding:100px 8%;
+  background:#0b1220;
+}
+
+.about-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:50px;
+  align-items:center;
+}
+
+.about-text h2{
+  font-size:32px;
+  margin-bottom:20px;
+}
+
+.about-text p{
+  line-height:1.8;
+  margin-bottom:20px;
+  color:#cbd5e1;
+}
+
+.about-values{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+
+.value-box{
+  background:#1E293B;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  transition:0.3s;
+}
+
+.value-box:hover{
+  transform:translateY(-5px);
+  background:#24324a;
+}
+
+.tagline{
+  margin-top:30px;
+  font-weight:bold;
+  color:#38BDF8;
+  font-size:18px;
+}
+
+.about-image img{
+  width:100%;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .about-container{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+}
+/* ===== CART STYLE LIKE SHOPEE ===== */
+
+.cart-style{
+  max-width:500px;
+}
+
+.cart-list{
+  margin-top:20px;
+  max-height:300px;
+  overflow-y:auto;
+}
+
+.cart-item{
+  display:flex;
+  gap:15px;
+  align-items:center;
+  background:#1E293B;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+
+.cart-item img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.cart-item-info{
+  flex:1;
+}
+
+.cart-item-info h4{
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.cart-item-info p{
+  font-size:13px;
+  color:#38BDF8;
+}
+
+.qty-control{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.qty-control button{
+  width:25px;
+  height:25px;
+  padding:0;
+  font-size:14px;
+  border-radius:6px;
+}
+
+.cart-footer{
+  margin-top:20px;
+  border-top:1px solid #333;
+  padding-top:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.checkout-btn{
+  background:#38BDF8;
+  padding:10px 20px;
+}
+/* ===== CHECKOUT STYLE ===== */
+
+.checkout-style{
+  max-width:500px;
+}
+
+.checkout-list{
+  margin-top:20px;
+  max-height:250px;
+  overflow-y:auto;
+}
+
+.checkout-item{
+  display:flex;
+  gap:15px;
+  align-items:center;
+  background:#1E293B;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+
+.checkout-item img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.checkout-info{
+  flex:1;
+}
+
+.checkout-info h4{
+  font-size:14px;
+}
+
+.checkout-info p{
+  font-size:13px;
+  color:#38BDF8;
+}
+
+.checkout-total{
+  margin-top:15px;
+  border-top:1px solid #333;
+  padding-top:15px;
+  display:flex;
+  justify-content:space-between;
+  font-size:16px;
+}
+/* ===== STYLE ISI PRODUK ===== */
+
+.product h3{
+  margin-top:10px;
+  font-size:16px;
+}
+
+.product p{
+  color:#38BDF8;
+  font-weight:bold;
+}
+
+.product button{
+  margin:10px;
+}
+.fade-in{
+  opacity:0;
+  transform:translateY(30px);
+  animation:fadeUp 1s ease forwards;
+}
+
+@keyframes fadeUp{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+button{
+  position:relative;
+  overflow:hidden;
+  transition:0.3s;
+}
+
+button:hover{
+  box-shadow:0 0 15px #38BDF8;
+  transform:translateY(-2px);
+}
+.product img{
+  transition:0.4s ease;
+}
+
+.product:hover img{
+  transform:scale(1.1);
+}
+/* ===== FIX CART FULL HEIGHT ===== */
+
+body.cart-active{
+  overflow:hidden;
+}
+
+.popup{
+  position:fixed;
+  inset:0;
+  display:none;
+  background:rgba(0,0,0,0.6);
+  z-index:9999;
+}
+
+.cart-style{
+  position:fixed;
+  top:0;
+  right:-420px;
+  width:400px;
+  height:100vh;        /* FULL TINGGI */
+  max-height:100vh;
+  background:var(--card);
+  padding:25px;
+  overflow-y:auto;     /* SCROLL DI DALAM CART */
+  transition:0.4s ease;
+  box-shadow:-5px 0 20px rgba(0,0,0,0.5);
+  border-radius:0;
+}
+
+.cart-open{
+  right:0;
+}
+@media(max-width:480px){
+  .cart-style{
+    width:100%;
+  }
+}
+/* ===== PREMIUM BACKGROUND ===== */
+body{
+  background:linear-gradient(135deg,#0F172A,#0B1220,#1E293B);
+  background-size:400% 400%;
+  animation:gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+.product{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;
+  padding:20px;
+  transition:0.4s ease;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.product:hover{
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:0 15px 40px rgba(56,189,248,0.3);
+}
+button{
+  transition:0.2s ease;
+}
+
+button:active{
+  transform:scale(0.95);
+}
+nav a{
+  position:relative;
+  transition:0.3s;
+}
+
+nav a::after{
+  content:'';
+  position:absolute;
+  bottom:-5px;
+  left:0;
+  width:0%;
+  height:2px;
+  background:#38BDF8;
+  transition:0.3s;
+}
+
+nav a:hover::after{
+  width:100%;
+}
+/* ===== NAVBAR PREMIUM ===== */
+
+.navbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:15px 50px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(15,23,42,0.7);
+  backdrop-filter:blur(10px);
+  z-index:1000;
+  transition:0.3s;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+  color:#38BDF8;
+  letter-spacing:2px;
+}
+
+.nav-links{
+  display:flex;
+  gap:30px;
+}
+
+.nav-links a{
+  color:white;
+  text-decoration:none;
+  font-size:15px;
+  position:relative;
+  transition:0.3s;
+}
+
+.nav-links a::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-5px;
+  width:0%;
+  height:2px;
+  background:#38BDF8;
+  transition:0.3s;
+}
+
+.nav-links a:hover{
+  color:#38BDF8;
+}
+
+.nav-links a:hover::after{
+  width:100%;
+}
+
+/* Hamburger */
+.menu-toggle{
+  display:none;
+  font-size:22px;
+  color:white;
+  cursor:pointer;
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{
+    position:absolute;
+    top:70px;
+    right:-100%;
+    flex-direction:column;
+    background:#0F172A;
+    width:220px;
+    padding:20px;
+    transition:0.4s;
+  }
+
+  .nav-links.active{
+    right:0;
+  }
+
+  .menu-toggle{
+    display:block;
+  }
+}
+body{
+  padding-top:90px;
+}
+.navbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:9999; /* UBAH JADI BESAR */
+}
+/* ===== CART BADGE ===== */
+#cart-count{
+  position:absolute;
+  top:-8px;
+  right:-12px;
+  background:#EF4444;
+  color:white;
+  font-size:11px;
+  font-weight:bold;
+  padding:3px 7px;
+  border-radius:50px;
+  min-width:18px;
+  text-align:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.product{
+  transition:0.4s ease;
+  cursor:pointer;
+}
+
+.product:hover{
+  transform:translateY(-10px);
+  box-shadow:0 20px 50px rgba(0,0,0,0.4);
+}
+.checkout-btn{
+  position:sticky;
+  bottom:0;
+  background:var(--accent);
+  padding:15px;
+  border-radius:10px;
+}
+.checkout-btn{
+  position:sticky;
+  bottom:0;
+  background:var(--accent);
+  color:white;
+  padding:15px;
+  width:100%;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:15px;
+  transition:0.3s ease;
+}
+
+.checkout-btn:hover{
+  opacity:0.9;
+  transform:scale(1.02);
+}
+/* === PAYMENT MODAL FIX FULLSCREEN === */
+.payment-modal{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999; /* SUPER TINGGI */
+  padding:20px;
+}
+
+.payment-box{
+  background:var(--card);
+  width:100%;
+  max-width:480px;
+  max-height:90vh;
+  overflow-y:auto;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6);
+  animation:fadeUp 0.4s ease;
+  position:relative;
+}
+
+.payment-box h2{
+  margin-bottom:20px;
+}
+
+#payment-summary{
+  margin-bottom:20px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.close-payment{
+  position:absolute;
+  top:15px;
+  right:20px;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.payment-box h2{
+  margin-bottom:15px;
+}
+
+.payment-form{
+  margin-top:20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.payment-form input{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+}
+
+.pay-btn{
+  margin-top:20px;
+  width:100%;
+  padding:15px;
+  background:var(--accent);
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.pay-btn:hover{
+  opacity:0.9;
+  transform:scale(1.03);
+}
+
+.close-payment{
+  float:right;
+  cursor:pointer;
+  font-size:18px;
+}
+#payment-modal {
+    z-index: 9999;
+    position: fixed;
+}
+
+#payment-modal .modal-content {
+    position: relative;
+    z-index: 10000;
+}
+.payment-method-box{
+  max-width:500px;
+  background:#0F172A;
+  border-radius:15px;
+  padding:25px;
+  text-align:center;
+}
+
+.payment-grid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:15px;
+  margin-top:20px;
+}
+
+.method-item{
+  background:#1E293B;
+  padding:15px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.method-item:hover{
+  transform:scale(1.05);
+  background:#334155;
+}
+
+.method-item img{
+  width:60px;
+  height:60px;
+  object-fit:contain;
+}
+
+.method-item p{
+  margin-top:8px;
+  font-size:14px;
+}
+/* ===== NAVBAR MODERN ===== */
+.navbar{
+  position:fixed;
+  top:0;
+  width:100%;
+  backdrop-filter:blur(12px);
+  background:rgba(15,23,42,0.75);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  z-index:9999;
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:25px;
+  font-weight:500;
+  transition:0.3s;
+}
+
+.navbar a:hover{
+  color:#38BDF8;
+}
+/* ===== HERO SECTION ===== */
+.hero{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:radial-gradient(circle at top,#1E293B,#0F172A);
+  padding:0 20px;
+}
+
+.hero h1{
+  font-size:48px;
+  font-weight:700;
+  background:linear-gradient(to right,#38BDF8,#818CF8);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.hero p{
+  margin-top:15px;
+  font-size:18px;
+  color:#cbd5e1;
+}
+
+.hero-btn{
+  margin-top:25px;
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(to right,#38BDF8,#6366F1);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.hero-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(56,189,248,0.5);
+}
+.fade-in{
+  opacity:0;
+  transform:translateY(30px);
+  transition:all 0.8s ease;
+}
+
+.fade-in.active{
+  opacity:1;
+  transform:translateY(0);
+}
+/* FRAME PRODUK KOTAK FIX */
+
+.product-card{
+  width: 250px;
+  height: 320px; /* diperbesar agar muat tombol */
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s ease;
+}
+
+.product-card:hover{
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* GAMBAR PRODUK */
+.product-card img{
+  width: 100%;
+  height: 60%;               /* bagian atas */
+  object-fit: cover;
+}
+
+/* PRODUCT INFO PREMIUM */
+
+.product-info{
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* NAMA PRODUK */
+.product-info h4{
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.3px;
+}
+
+/* HARGA PRODUK */
+.product-info p{
+  font-size: 18px;
+  font-weight: 800;
+  color: #2563EB; /* biru premium */
+  margin: 0 0 10px 0;
+}
+
+.product-card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.6);
+}
+/* ===== ANIMATED GRADIENT BACKGROUND ===== */
+
+body{
+  background: linear-gradient(-45deg, #0F172A, #1E293B, #0F172A, #111827);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  overflow-x: hidden;
+}
+
+/* Gradient bergerak */
+@keyframes gradientMove {
+  0%{
+    background-position: 0% 50%;
+  }
+  50%{
+    background-position: 100% 50%;
+  }
+  100%{
+    background-position: 0% 50%;
+  }
+}
+/* ===== FLOATING GLOW EFFECT ===== */
+
+.glow-bg{
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(56,189,248,0.25), transparent 60%);
+  filter: blur(120px);
+  top: -200px;
+  left: -200px;
+  z-index: -1;
+  animation: floatGlow 12s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow{
+  0%{
+    transform: translate(0px, 0px);
+  }
+  100%{
+    transform: translate(200px, 150px);
+  }
+}
+html{
+  scroll-behavior: smooth;
+}
+/* PRODUCT DETAIL POPUP */
+
+.product-detail-popup{
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+  background: white;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.2);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+}
+
+.product-detail-popup.active{
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.product-detail-content{
+  padding: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.product-detail-content img{
+  width: 100%;
+  aspect-ratio: 1 / 1;   /* ini bikin 4x4 kotak */
+  object-fit: cover;     /* supaya tidak gepeng */
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.product-detail-content h2{
+  margin-bottom: 10px;
+  color: #0F172A;
+}
+
+.product-detail-content p{
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.product-detail-content h3{
+  color: #0F172A;
+  margin-bottom: 20px;
+}
+
+.add-btn{
+  background: #0F172A;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.add-btn:hover{
+  background: #1E293B;
+}
+
+.close-detail{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 25px;
+  cursor: pointer;
+  color: #333;
+}
+.product-detail-content img{
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  transition: 0.4s ease;
+}
+
+.product-detail-content img:hover{
+  transform: scale(1.05);
+}
+.product-container{
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.product-info p{
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #0F172A;
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+.product-info h4{
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 6px;
+  transition: 0.3s ease;
+}
+
+.product-card:hover .product-info h4{
+  color: #2563EB;
+}
+.add-btn{
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #0F172A;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-btn:hover{
+  background: #1E293B;
+}
+/* HILANGKAN KOTAK PUTIH BAWAH */
+footer,
+.bottom-section,
+.extra-space {
+  background: transparent !important;
+}
+
+body{
+  background:#0F172A;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="glow-bg"></div>
+
+<header class="navbar">
+  <div class="logo">QUANTYM</div>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#product-list">Katalog</a>
+    <a href="#contact">Contact</a>
+    <a href="javascript:void(0)" onclick="openCart()" style="position:relative;">
+  🛒
+  <span id="cart-count">0</span>
+</a>
+  </nav>
+
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+</header>
+<section class="hero">
+  <div class="hero-content">
+    <h1>Solusi Digital Tanpa Batas</h1>
+    <p>Bangun brand & bisnis digital kamu dengan produk premium dan sistem otomatis.</p>
+    <button onclick="scrollToCatalog()" class="hero-btn">Lihat</button>
+  </div>
+</section>
+
+<section id="catalog" class="catalog"></section>
+
+<section class="hero fade-in" id="home">
+  <h1>Quantym Digital Store</h1>
+  <p>Insight Beyond Limits</p>
+</section>
+
+</section>
+
+<!-- ABOUT PREMIUM SECTION -->
+<section id="about" class="about-section fade-in">
+  <div class="about-container">
+
+    <div class="about-text">
+      <h2>TENTANG QUANTYM</h2>
+      <p>
+        <strong>Quantym</strong> adalah brand digital modern yang fokus pada
+        pengembangan insight, strategi, dan tools untuk membantu individu
+        maupun bisnis berkembang di era digital.
+      </p>
+
+      <p>
+        Kami percaya bahwa pertumbuhan dimulai dari pemahaman yang dalam.
+        Karena itu, setiap produk Quantym dirancang untuk memberikan
+        kejelasan, strategi, dan keunggulan kompetitif.
+      </p>
+
+      <div class="about-values">
+        <div class="value-box">
+          <h4>Vision</h4>
+          <p>Menjadi platform insight digital terpercaya di Indonesia.</p>
+        </div>
+
+        <div class="value-box">
+          <h4>Mission</h4>
+          <p>Menyediakan produk digital berkualitas & aplikatif.</p>
+        </div>
+
+        <div class="value-box">
+          <h4>Core Value</h4>
+          <p>Innovation • Clarity • Growth</p>
+        </div>
+      </div>
+
+      <p class="tagline">Insight Beyond Limits</p>
+    </div>
+
+    <div class="about-image">
+      <img src="assets\img\QUANTYM BLUE  (FINAL).png" alt="QUANTYM">
+    </div>
+
+  </div>
+</section>
+
+<div class="products fade-in" id="product-list">
+
+<div class="product-card">
+    <img src="data:image/jpeg;base64,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" alt="Produk">
+
+    <div class="product-info">
+        <h4>E-Book Marketing</h4>
+        <p>Rp 49.000</p>
+        <button onclick="addToCart('E-Book Panduan', 49000, 'data:image/jpeg;base64,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')">
+            Tambah
+        </button>
+    </div>
+</div>
+
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel">
+  <h3>Admin Panel (Tambah Produk)</h3>
+  <input type="text" id="pname" placeholder="Nama Produk">
+  <input type="number" id="pprice" placeholder="Harga">
+  <input type="text" id="pimg" placeholder="Link Gambar (assets/...jpg)">
+  <button onclick="addProduct()">Tambah Produk</button>
+</div>
+
+<!-- CONTACT-->
+<section id="contact" style="padding:80px 8%; background:#111827;">
+  <h2>Contact</h2>
+  <p>Email: hello.quantym@gmail.com</p>
+  <p>WhatsApp: +6289518939925 </p>
+</section>
+
+<footer>
+© 2026 Quantym - Insight Beyond Limits
+</footer>
+
+<!-- CART -->
+<div class="popup" id="cartPopup">
+<div class="popup-content cart-style">
+<span class="close" onclick="closeCart()">×</span>
+<h3>Keranjang Saya</h3>
+
+<div id="cart-items" class="cart-list"></div>
+
+<div class="cart-footer">
+  <div class="cart-total">
+    <span>Total</span>
+    <strong>Rp <span id="total-price">0</span></strong>
+  </div>
+  <button class="checkout-btn" onclick="checkout()">Checkout</button>
+</div>
+
+</div>
+</div>
+
+
+<script>
+let cart = [];
+let total = 0;
+
+/* =============================
+   ADD TO CART
+============================= */
+function addToCart(name, price, img){
+
+  let existing = cart.find(item => item.name === name);
+
+  if(existing){
+    existing.qty += 1;
+  }else{
+    cart.push({name, price, img, qty:1});
+  }
+
+  updateCartDisplay();
+  animateCart();
+  showToast();
+
+  // 🔥 TAMBAHAN INI
+  openCart();document.querySelector("nav").scrollIntoView({
+  behavior:"smooth"
+});
+}
+
+/* =============================
+   UPDATE CART DISPLAY
+============================= */
+function updateCartDisplay(){
+
+  let cartHTML = "";
+  total = 0;
+
+  cart.forEach((item,index)=>{
+
+    let subtotal = item.price * item.qty;
+    total += subtotal;
+
+    cartHTML += `
+    <div class="cart-item">
+      <img src="${item.img}">
+      <div class="cart-item-info">
+        <h4>${item.name}</h4>
+        <p>Rp ${item.price}</p>
+      </div>
+
+      <div class="qty-control">
+        <button onclick="decreaseQty(${index})">-</button>
+        <span>${item.qty}</span>
+        <button onclick="increaseQty(${index})">+</button>
+      </div>
+
+      <button onclick="removeItem(${index})">❌</button>
+    </div>
+    `;
+  });
+
+  document.getElementById("cart-items").innerHTML = cartHTML;
+  document.getElementById("total-price").innerText = total;
+  document.getElementById("cart-count").innerText = cart.length;
+}
+
+/* =============================
+   QTY CONTROL
+============================= */
+function increaseQty(index){
+  cart[index].qty += 1;
+  updateCartDisplay();
+}
+
+function decreaseQty(index){
+  if(cart[index].qty > 1){
+    cart[index].qty -= 1;
+  }else{
+    cart.splice(index,1);
+  }
+  updateCartDisplay();
+}
+
+function removeItem(index){
+  cart.splice(index,1);
+  updateCartDisplay();
+}
+
+/* =============================
+   POPUP CONTROL CLEAN
+============================= */
+
+function openCart(){
+  updateCartDisplay();
+  document.getElementById("cartPopup").style.display="block";
+  document.querySelector(".cart-style").classList.add("cart-open");
+  document.body.classList.add("cart-active");
+}
+
+function closeCart(){
+  document.querySelector(".cart-style").classList.remove("cart-open");
+  document.body.classList.remove("cart-active");
+  setTimeout(()=>{
+    document.getElementById("cartPopup").style.display="none";
+  },400);
+}
+
+function openOrder(){
+  if(cart.length === 0){
+  cartItems.innerHTML = `
+    <div style="text-align:center;padding:60px 20px;opacity:0.7">
+      <div style="font-size:60px;margin-bottom:10px;">🛒</div>
+      <h3>Keranjang kamu kosong</h3>
+      <p style="font-size:14px;">Yuk tambahkan produk digital terbaikmu sekarang.</p>
+    </div>
+  `;
+}
+  closeCart();
+  document.getElementById("orderPopup").style.display="flex";
+}
+
+function closeOrder(){
+  document.getElementById("orderPopup").style.display="none";
+}
+
+function openPayment(){
+  let ig = document.getElementById("ig").value;
+  let wa = document.getElementById("wa").value;
+
+  if(!ig || !wa){
+    alert("Isi semua data!");
+    return;
+  }
+
+  closeOrder();
+  document.getElementById("paymentPopup").style.display="flex";
+}
+
+function closePayment(){
+  document.getElementById("paymentPopup").style.display="none";
+}
+
+/* =============================
+   WHATSAPP
+============================= */
+function sendWhatsApp(){
+
+  let nama = document.getElementById("ig-username").value;
+  let waUser = document.getElementById("wa-number").value;
+
+  let message = 
+  "Halo Admin, saya sudah melakukan pembayaran.%0A%0A" +
+  "Nama: " + nama +
+  "%0ANomor: " + waUser +
+  "%0AProduk:%0A";
+
+  cart.forEach(item=>{
+    message += "- " + item.name + " (" + item.qty + "x)%0A";
+  });
+
+  message += "%0ATotal: Rp " + total;
+
+  // GANTI DENGAN NOMOR ADMIN
+  window.open("https://wa.me/6289518939925?text=" + message, "_blank");
+
+  // Reset
+  cart = [];
+  updateCartDisplay();
+
+  document.getElementById("paymentPopup").style.display = "none";
+}
+
+/* =============================
+   ADMIN ADD PRODUCT
+============================= */
+function addProduct(){
+  let name = document.getElementById("pname").value;
+  let price = document.getElementById("pprice").value;
+  let img = document.getElementById("pimg").value;
+
+  if(!name || !price || !img){
+    alert("Isi semua data produk!");
+    return;
+  }
+
+  let html = `
+  <div class="product">
+    <img src="${img}">
+    <h3>${name}</h3>
+    <p>Rp ${price}</p>
+    <button onclick="addToCart('${name}',${price},'${img}')">Tambah</button>
+  </div>
+  `;
+
+  document.getElementById("product-list").innerHTML += html;
+}
+
+/* =============================
+   CART ANIMATION
+============================= */
+function animateCart(){
+  let cartIcon = document.querySelector("nav a:last-child");
+  cartIcon.classList.add("cart-animate");
+
+  setTimeout(()=>{
+    cartIcon.classList.remove("cart-animate");
+  },400);
+}
+
+/* =============================
+   TOAST
+============================= */
+function showToast(){
+  let toast = document.getElementById("toast");
+  toast.style.display="block";
+
+  setTimeout(()=>{
+    toast.style.display="none";
+  },2000);
+}
+function openOrder(){
+
+  if(cart.length === 0){
+    alert("Keranjang masih kosong!");
+    return;
+  }
+
+  closeCart();
+
+  let checkoutHTML = "";
+  let checkoutTotal = 0;
+
+  cart.forEach(item => {
+
+    let subtotal = item.price * item.qty;
+    checkoutTotal += subtotal;
+
+    checkoutHTML += `
+    <div class="checkout-item">
+      <img src="${item.img}">
+      <div class="checkout-info">
+        <h4>${item.name}</h4>
+        <p>${item.qty} x Rp ${item.price}</p>
+      </div>
+      <strong>Rp ${subtotal}</strong>
+    </div>
+    `;
+  });
+
+  document.getElementById("checkout-items").innerHTML = checkoutHTML;
+  document.getElementById("checkout-total-price").innerText = checkoutTotal;
+
+  document.getElementById("orderPopup").style.display="flex";
+}
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+function checkout(){
+  if(cart.length === 0){
+    alert("Keranjang masih kosong!");
+    return;
+  }
+
+
+
+  let summary = document.getElementById("payment-summary");
+  let total = 0;
+  summary.innerHTML = "";
+
+  cart.forEach(item=>{
+    total += item.price * item.qty;
+    summary.innerHTML += `
+      <div>
+        ${item.name} (${item.qty}x) - Rp ${item.price * item.qty}
+      </div>
+    `;
+  });
+
+  document.getElementById("payment-total").innerText = total;
+  document.getElementById("payment-modal").style.display = "flex";
+}
+function closePayment(){
+  document.getElementById("payment-modal").style.display = "none";
+}
+
+function processPayment(){
+  let ig = document.getElementById("ig-username").value;
+  let wa = document.getElementById("wa-number").value;
+
+  if(!ig || !wa){
+    alert("Harap isi semua data!");
+    return;
+  }
+
+  let total = document.getElementById("payment-total").innerText;
+
+  let message = `Halo Admin, saya ingin membeli produk:%0A`;
+
+  cart.forEach(item=>{
+    message += `- ${item.name} (${item.qty}x)%0A`;
+  });
+
+  message += `%0ATotal: Rp ${total}%0A`;
+  message += `Instagram: ${ig}%0A`;
+  message += `WhatsApp: ${wa}`;
+
+  window.open(`https://wa.me/6289518939925?text=${message}`, "_blank");
+
+  cart = [];
+  updateCartDisplay();
+  closePayment();
+}
+function goToPaymentMethod(){
+
+  let Nama = document.getElementById("Masukan").value;
+  let Nomor = document.getElementById("08xxxx").value;
+
+  if(!Nama || !Nomor){
+    alert("Harap isi semua data!");
+    return;
+  }
+
+  // Tutup ringkasan
+  document.getElementById("payment-modal").style.display = "none";
+
+  // Buka metode pembayaran lama
+  document.getElementById("paymentPopup").style.display = "flex";
+  document.querySelector("#paymentPopup h3").innerText = "Total: Rp " + total;
+}
+function goToPaymentMethod(){
+
+  let nama = document.getElementById("ig-username");
+  let wa = document.getElementById("wa-number");
+
+  if(!nama || !wa){
+    alert("Input tidak ditemukan!");
+    return;
+  }
+
+  if(nama.value === "" || wa.value === ""){
+    alert("Harap isi semua data!");
+    return;
+  }
+
+  // Tutup ringkasan
+  document.getElementById("payment-modal").style.display = "none";
+
+  // Buka metode pembayaran
+  let paymentPopup = document.getElementById("paymentPopup");
+
+  if(paymentPopup){
+    paymentPopup.style.display = "flex";
+  } else {
+    alert("Popup metode pembayaran tidak ditemukan!");
+  }
+}
+let selectedMethod = "";
+
+function selectPayment(method){
+
+  selectedMethod = method;
+
+  let nama = document.getElementById("ig-username").value;
+  let waUser = document.getElementById("wa-number").value;
+
+  let message =
+  "Halo Admin, saya ingin konfirmasi pembayaran.%0A%0A" +
+  "Nama: " + nama +
+  "%0ANomor: " + waUser +
+  "%0AMetode: " + method +
+  "%0AProduk:%0A";
+
+  cart.forEach(item=>{
+    message += "- " + item.name + " (" + item.qty + "x)%0A";
+  });
+
+  message += "%0ATotal: Rp " + total;
+
+  window.open("https://wa.me/6289518939925?text=" + message, "_blank");
+
+  document.getElementById("paymentPopup").style.display = "none";
+
+  cart = [];
+  updateCartDisplay();
+}
+// Scroll animation
+const faders = document.querySelectorAll('.fade-in');
+
+window.addEventListener('scroll', ()=>{
+  faders.forEach(el=>{
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight - 100){
+      el.classList.add('active');
+    }
+  });
+});
+function scrollToCatalog(){
+  document.getElementById("catalog").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+function openProductDetail(name, description, price, image){
+
+  document.getElementById("detailName").innerText = name;
+  document.getElementById("detailDescription").innerText = description;
+  document.getElementById("detailPrice").innerText = price;
+  document.getElementById("detailImage").src = image;
+
+  const addBtn = document.getElementById("detailAddBtn");
+
+  addBtn.onclick = function(){
+    addToCart(name, price, image);
+    closeProductDetail();
+  };
+
+  document.getElementById("productDetailPopup").classList.add("active");
+}
+
+function closeProductDetail(){
+  document.getElementById("productDetailPopup").classList.remove("active");
+}
+</script>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" style="
+position:fixed;
+bottom:30px;
+right:30px;
+background:#38BDF8;
+color:#000;
+padding:15px 20px;
+border-radius:10px;
+display:none;
+font-weight:bold;
+z-index:9999;
+">
+Produk ditambahkan ke keranjang!
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="payment-modal" class="payment-modal">
+  <div class="payment-box">
+    <span class="close-payment" onclick="closePayment()">✖</span>
+    <h2>Ringkasan Pembayaran</h2>
+
+    <div id="payment-summary"></div>
+
+    <div class="payment-form">
+      <label>Nama Lengkap</label>
+      <input type="text" id="ig-username" placeholder="Masukan">
+
+      <label>Nomor Telepon</label>
+      <input type="text" id="wa-number" placeholder="08xxxxxxxxxx">
+    </div>
+
+    <h3>Total: Rp <span id="payment-total">0</span></h3>
+
+    <button class="pay-btn" onclick="goToPaymentMethod()">Bayar Sekarang</button>
+  </div>
+</div>
+<!-- PAYMENT METHOD POPUP -->
+<div id="paymentPopup" class="popup" style="display:none;">
+  <div class="popup-content payment-method-box">
+
+    <h3>Pilih Metode Pembayaran</h3>
+
+    <div class="payment-grid">
+
+      <div class="method-item" onclick="selectPayment('DANA')">
+        <img src="assets\img\logo dana.jpeg">
+        <p>DANA</p>
+      </div>
+
+      <div class="method-item" onclick="selectPayment('QRIS')">
+        <img src="assets\img\logo qris.jpeg">
+        <p>QRIS</p>
+      </div>
+
+    </div>
+
+    <button onclick="document.getElementById('paymentPopup').style.display='none'">
+      Tutup
+    </button>
+
+  </div>
+</div>
+<!-- PRODUCT DETAIL POPUP -->
+<div id="productDetailPopup" class="product-detail-popup">
+  <div class="product-detail-content">
+
+    <span class="close-detail" onclick="closeProductDetail()">×</span>
+
+    <img id="detailImage" src="" alt="Product Image">
+
+    <h2 id="detailName"></h2>
+
+    <p id="detailDescription"></p>
+
+    <h3>Rp <span id="detailPrice"></span></h3>
+
+    <button id="detailAddBtn" class="add-btn">Tambah ke Keranjang</button>
+
+  </div>
+</div>
+
+
+</body>
+</html>
